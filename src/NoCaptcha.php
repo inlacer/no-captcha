@@ -23,6 +23,8 @@ class NoCaptcha
      */
     protected $sitekey;
 
+    protected $testResponse = 1;
+
     /**
      * NoCaptcha.
      *
@@ -42,6 +44,12 @@ class NoCaptcha
      */
     public function display($attributes = [], $lang = null)
     {
+        if (env('APP_ENV') === 'testing' || env('APP_ENV') === 'local') {
+            $html = '<div class="g-recaptcha"'.$this->buildAttributes($attributes).'><input type="checkbox" name="g-recaptcha-response" class="g-recaptcha-response" value="'.$this->testResponse.'" /></div>';
+
+            return $html;
+        }
+
         $attributes['data-sitekey'] = $this->sitekey;
 
         $html = '<script src="'.$this->getJsLink($lang).'" async defer></script>'."\n";
@@ -62,6 +70,12 @@ class NoCaptcha
     {
         if (empty($response)) {
             return false;
+        }
+
+        if (env('APP_ENV') === 'testing' || env('APP_ENV') === 'local') {
+            if ($response === $this->testResponse) {
+                return true;
+            }
         }
 
         $response = $this->sendRequestVerify([
