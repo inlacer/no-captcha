@@ -23,7 +23,7 @@ class NoCaptcha
      */
     protected $sitekey;
 
-    protected $testResponse = 1;
+    protected $testResponse = '1';
 
     /**
      * NoCaptcha.
